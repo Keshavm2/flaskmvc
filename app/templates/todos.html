@@ -1,0 +1,19 @@
+{% extends "authenticated-base.html" %}
+
+{% block subpage_content %}
+<h2>Todos</h2>
+
+<div class="row">
+    {% for todo in todos %}
+    <div class="col-12 col-md-6 col-lg-4 mb-3">
+        <div class="card p-3">
+            <h5>{{ todo.title }}</h5>
+            <p>
+                Status: {{ 'Completed' if todo completed }}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
