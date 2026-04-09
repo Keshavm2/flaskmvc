@@ -24,23 +24,3 @@ async def app(
             "user": user
         }
     )
-
-@app_router.get("/todos", response_class=HTMLResponse)
-async def read_todos(
-    request: Request,
-    user: AuthDep,
-    db: SessionDep,
-    page: int = 1
-):
-    repo = TodoRepository(db)
-    todos, pagination = repo.get_todos(page=page)
-    
-    return templates.TemplateResponse(
-        request=request,
-        name="todos.html",
-        context={
-            "user": user,
-            "todos": todos,
-            "pagination": pagination
-        }
-    )

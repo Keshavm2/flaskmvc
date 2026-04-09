@@ -1,19 +1,107 @@
 {% extends "authenticated-base.html" %}
 
-{% block subpage_content %}
-<h2>Todos</h2>
+{% block additional_styles %}
+<style>
+    .todo-card {
+        transition: transform 0.1s;
+    }
+    .todo-card:hover {
+        transform: translateY(-2px);
+    }
+    .completed-title {
+        text-decoration: line-through;
+        color: #adb5bd;
+    }
+</style>
+{% endblock %}
 
-<div class="row">
-    {% for todo in todos %}
-    <div class="col-12 col-md-6 col-lg-4 mb-3">
-        <div class="card p-3">
-            <h5>{{ todo.title }}</h5>
-            <p>
-                Status: {{ 'Completed' if todo completed }}
-            </p>
-        </div>
+{% block subpage_content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="fw-bold mb-1">My Todos</h3>
+        <p class="text-muted">Manage your tasks below.</p>
     </div>
-    {% endfor %}
 </div>
 
+<!-- Create Todo Form -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm p-4">
+            <h5 class="fw-semibold mb-3">Add New Todo</h5>
+            <form action="/todos/create" method="post">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <input
+                            type="text"
+                            name="title"
+                            class="form-control"
+                            placeholder="Title"
+                            required
+                        />
+                    </div>
+                    <div class="col-md-6">
+                        <input
+                            type="text"
+                            name="description"
+                            class="form-control"
+                            placeholder="Description (optional)"
+                        />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Todo List -->
+<div class="row g-3">
+    {% if todos %}
+        {% for todo in todos %}
+        <div class="col-12">
+            <div class="card shadow-sm todo-card p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Toggle complete -->
+                        <form action="/todos/toggle/{{ todo.id }}" method="post" class="mb-0">
+                            <button
+                                type="submit"
+                                class="btn btn-sm {{ 'btn-success' if todo.completed else 'btn-outline-secondary' }}"
+                                title="{{ 'Mark incomplete' if todo.completed else 'Mark complete' }}"
+                            >
+                                <span class="material-icons" style="font-size:1.1rem;">
+                                    {{ 'check_circle' if todo.completed else 'radio_button_unchecked' }}
+                                </span>
+                            </button>
+                        </form>
+                        <div>
+                            <p class="mb-0 fw-semibold {{ 'completed-title' if todo.completed }}">
+                                {{ todo.title }}
+                            </p>
+                            {% if todo.description %}
+                            <small class="text-muted">{{ todo.description }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Delete -->
+                    <form action="/todos/delete/{{ todo.id }}" method="post" class="mb-0">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                            <span class="material-icons" style="font-size:1.1rem;">delete</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="card shadow-sm p-5 text-center text-muted">
+                <span class="material-icons mb-2" style="font-size:2.5rem;">check_circle_outline</span>
+                <p class="mb-0">No todos yet. Add one above!</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
